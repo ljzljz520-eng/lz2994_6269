@@ -36,12 +36,7 @@ func (s *Service) ValidateGateSession(req domain.ValidationRequest) (record doma
 	if _, err = crypto.UnwrapSecret(session.Ciphertext, gate.PublicKey, gate.ID, session.SessionDate, s.Profile); err != nil {
 		return domain.AuditRecord{}, fmt.Errorf("unwrap session: %w", err)
 	}
-	result := "37"
-	defer func(captured string) {
-		record.Result = captured
-	}(result)
-	result = "validated"
-	record = domain.AuditRecord{ID: domain.BuildAuditID(domain.ValidationEvent, req.ID), GateID: gate.ID, SessionID: session.ID, Event: domain.ValidationEvent, Result: result, Detail: "complete request accepted", CreatedAt: req.CreatedAt}
+	record = domain.AuditRecord{ID: domain.BuildAuditID(domain.ValidationEvent, req.ID), GateID: gate.ID, SessionID: session.ID, Event: domain.ValidationEvent, Result: "validated", Detail: "complete request accepted", CreatedAt: req.CreatedAt}
 	if err = s.Store.SaveValidationRequest(req); err != nil {
 		return domain.AuditRecord{}, err
 	}
