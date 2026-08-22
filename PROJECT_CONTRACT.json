@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "production_loc": 2323,
+    "production_files": 52,
+    "production_packages": 8,
+    "test_files": 11,
+    "production_functions": 238,
+    "decision_points": 333
+  },
+  "persistence": {
+    "module": "go.etcd.io/bbolt",
+    "entities": ["Gate", "GateSession", "ValidationRequest", "AuditRecord"],
+    "reopen_test": "TestPersistenceSurvivesReopen"
+  },
+  "workflows": [
+    {
+      "steps": ["Validate gate identifier and public key", "Persist Gate entity", "Reload gate by identifier", "Return registration result"],
+      "test": "TestWorkflowRegisterGate"
+    },
+    {
+      "steps": ["Load registered gate", "Derive deterministic session secret", "Wrap secret with gate public key", "Persist session and audit summary"],
+      "test": "TestWorkflowNegotiateSession"
+    },
+    {
+      "steps": ["Load gate session and request", "Decrypt and validate ciphertext", "Record validation outcome", "Return complete matching audit record"],
+      "test": "TestBusinessChain37"
+    }
+  ]
+}
